@@ -1,0 +1,117 @@
+
+../tests/BreakYe.java
+Compilation successful for ../tests/BreakYe.java.
+
+../tests/Butter.java
+field Jam.x offset = -20
+field Jam.z offset = 0
+test parameter q offset = 4
+field Toast.y offset = -16
+Compilation successful for ../tests/Butter.java.
+
+../tests/DynDispatch.java
+Compilation successful for ../tests/DynDispatch.java.
+
+../tests/FibIterative.java
+fib parameter n offset = 4
+Compilation successful for ../tests/FibIterative.java.
+
+../tests/FibRecursive.java
+fib parameter n offset = 4
+Compilation successful for ../tests/FibRecursive.java.
+
+../tests/FieldTest.java
+field A.x offset = -16
+field B.c offset = 0
+field B.y offset = -20
+field C.z offset = -24
+field C.a offset = 4
+field D.s offset = 8
+field D.b offset = 12
+field D.w offset = -28
+field E.d offset = 16
+Compilation successful for ../tests/FieldTest.java.
+
+../tests/Foo.java
+foo parameter x offset = 8
+foo parameter y offset = 4
+Compilation successful for ../tests/Foo.java.
+
+../tests/Hello.java
+Compilation successful for ../tests/Hello.java.
+
+../tests/ParamTest.java
+foo parameter x offset = 16
+foo parameter y offset = 12
+foo parameter z offset = 4
+mains parameter x offset = 12
+mains parameter y offset = 8
+mains parameter z offset = 4
+lotsOints parameter i1 offset = 44
+lotsOints parameter i2 offset = 36
+lotsOints parameter i3 offset = 28
+lotsOints parameter i4 offset = 20
+lotsOints parameter i5 offset = 12
+lotsOints parameter i6 offset = 4
+lotsObjs parameter o1 offset = 24
+lotsObjs parameter s2 offset = 20
+lotsObjs parameter m3 offset = 16
+lotsObjs parameter l4 offset = 12
+lotsObjs parameter o5 offset = 8
+lotsObjs parameter m6 offset = 4
+types parameter i1 offset = 36
+types parameter b2 offset = 32
+types parameter o3 offset = 28
+types parameter i4 offset = 20
+types parameter s5 offset = 16
+types parameter b6 offset = 12
+types parameter i7 offset = 4
+Compilation successful for ../tests/ParamTest.java.
+
+../tests/RedBlack.java
+helpInsert parameter data offset = 4
+insert parameter data offset = 4
+helpPrint parameter bl offset = 8
+helpPrint parameter lib offset = 4
+lookup parameter data offset = 4
+delete parameter data offset = 4
+helpDelete parameter data offset = 8
+helpDelete parameter isShort offset = 4
+helpInsert parameter data offset = 4
+field NonNullRedBlackTree.data offset = -16
+field NonNullRedBlackTree.left offset = 0
+field NonNullRedBlackTree.right offset = 4
+field NonNullRedBlackTree.isBlack offset = -20
+init parameter data offset = 16
+init parameter left offset = 12
+init parameter right offset = 8
+init parameter isBlack offset = 4
+helpInsert parameter data offset = 4
+lookup parameter data offset = 4
+helpDelete parameter data offset = 8
+helpDelete parameter isShort offset = 4
+adjustAfterDelete parameter doMirrorImage offset = 8
+adjustAfterDelete parameter isShort offset = 4
+getRight parameter doMirrorImage offset = 4
+getLeft parameter doMirrorImage offset = 4
+setRight parameter node offset = 8
+setRight parameter doMirrorImage offset = 4
+setLeft parameter node offset = 8
+setLeft parameter doMirrorImage offset = 4
+rebalanceAfterInsert parameter doMirrorImage offset = 4
+helpPrint parameter bl offset = 8
+helpPrint parameter lib offset = 4
+helpPrintIndent parameter bl offset = 8
+helpPrintIndent parameter lib offset = 4
+field BooleanList.val offset = -16
+field BooleanList.next offset = 0
+init parameter val offset = 8
+init parameter next offset = 4
+Compilation successful for ../tests/RedBlack.java.
+
+../tests/Seive.java
+Compilation successful for ../tests/Seive.java.
+
+../tests/VerySimple.java
+Compilation successful for ../tests/VerySimple.java.
+
