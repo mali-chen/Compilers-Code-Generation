@@ -114,5 +114,84 @@ public class CG3Visitor extends Visitor
         n.callExp.accept(this);
         return null;
     }
+
+    // stack helpers
+    private void push(AstNode n, String reg){
+        // push a register value onto the stack and update stack counter
+        code.emit(n, " subu $sp, $sp , 4");
+        code.emit(n, " sw " + reg + ", 0($sp)");
+        stack += 4;
+    }
+
+    private void pop(AstNode n, String reg){
+        // pop a register value onto the stack and update stack counter
+        code.emit(n, " lw " + reg + ", 0($sp)");
+        code.emit(n, " addu $sp, $sp , 4");
+        stack -= 4;
+    }
+
+    // expressions
+    // integer literal
+    @Override
+    public Object visit(IntLit n){
+        code.emit(n," li $t0, " + n.val);
+        push(n, "t$0");
+        return null;
+    }
+
+    // boolean literal true: push 1
+    @Override
+    public Object visit(True n){
+        code.emit(n, " li $t0, 1");
+        push(n, "t$0");
+        return null;
+    }
+
+    // boolean literal false: push 0
+    @Override
+    public Object visit(False n){
+        code.emit(n, " li $t0, 0");
+        push(n, "t$0");
+        return null;
+    }
+
+    // string literal: push address of string object
+    @Override
+    public Object visit(StringLit n){
+        StringLit primaryString;
+        if(n.uniqueCgRep != null){
+            // if a unique version exists, use it
+            primaryString = n.uniqueCgRep;
+        } else{ 
+            primaryString = n;
+        }
+        code.emit(n, " la $t0, strLit_" + primaryString.pos);
+        push(n, "t$0");
+        return null;
+    }
+
+    // variable reference: laod from its slot relative to $fp
+    @Override
+    public Object visit(IDExp n){
+        int offset = n.link.offset;
+        code.emit(n, " lw $t0, " + offset + "($fp");
+        push(n, "$t0");
+        return null;
+    }
+
+    // this: current object pointer always in $s2
+    @Override
+    public Object visit(This n){
+        push(n, "$s2");
+        return null;
+    }
+
+    // super: current object pointer always in $s2
+    @Override
+    public Object visit(Super n){
+        push(n, "$s2");
+        return null;
+    }
+
 }
 
