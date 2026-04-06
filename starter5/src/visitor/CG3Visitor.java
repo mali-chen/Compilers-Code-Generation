@@ -46,7 +46,8 @@ public class CG3Visitor extends Visitor
         //Put code for mainStmt here:
         //For now, I'll just make code that calls Main_main
         //but you'll need to replace this.
-        fakeMainStmt();
+        // fakeMainStmt();
+        n.mainStmt.accept(this);
 
         //exit the program
         code.emit("  li $v0, 10");
@@ -197,36 +198,63 @@ public class CG3Visitor extends Visitor
     // plus
     @Override
     public Object visit(Plus n){
-        n.left.accept(this); //push left operand
-        n.right.accept(this); //push right operand
-        pop("$t1");     //right -> $t1
-        pop("$t0");     //left  -> $t0
-        code.emit(n, " addu $t0, $t0, $t1"); // add them  
-        push("$t0");
+       n.left.accept(this);
+        n.right.accept(this);
+
+        code.emit("  lw $t1, ($sp)");
+        code.emit("  addu $sp, $sp, 4");
+        code.emit("  lw $t0, ($sp)");
+        code.emit("  addu $sp, $sp, 4");
+        stack -= 8;
+
+        code.emit("  add $t0, $t0, $t1");
+
+        code.emit("  subu $sp, $sp, 4");
+        code.emit("  sw $t0, ($sp)");
+        stack += 4;
+
         return null;
     }
 
     // minus
     @Override
     public Object visit(Minus n){
-        n.left.accept(this); //push left operand
-        n.right.accept(this); //push right operand
-        pop("$t1");     //right -> $t1
-        pop("$t0");     //left  -> $t0
-        code.emit(n, " subu $t0, $t0, $t1"); // subtract them  
-        push("$t0");
+        n.left.accept(this);
+        n.right.accept(this);
+
+        code.emit("  lw $t1, ($sp)");
+        code.emit("  addu $sp, $sp, 4");
+        code.emit("  lw $t0, ($sp)");
+        code.emit("  addu $sp, $sp, 4");
+        stack -= 8;
+
+        code.emit("  sub $t0, $t0, $t1");
+
+        code.emit("  subu $sp, $sp, 4");
+        code.emit("  sw $t0, ($sp)");
+        stack += 4;
+
         return null;
     }
 
     // multiply
     @Override
     public Object visit(Times n){
-        n.left.accept(this); //push left operand
-        n.right.accept(this); //push right operand
-        pop("$t1");     //right -> $t1
-        pop("$t0");     //left  -> $t0
-        code.emit(n, " mul $t0, $t0, $t1"); // mulitply them  
-        push("$t0");
+        n.left.accept(this);
+        n.right.accept(this);
+
+        code.emit("  lw $t1, ($sp)");
+        code.emit("  addu $sp, $sp, 4");
+        code.emit("  lw $t0, ($sp)");
+        code.emit("  addu $sp, $sp, 4");
+        stack -= 8;
+
+        code.emit("  mul $t0, $t0, $t1");
+
+        code.emit("  subu $sp, $sp, 4");
+        code.emit("  sw $t0, ($sp)");
+        stack += 4;
+
         return null;
     }
 
@@ -273,5 +301,33 @@ public class CG3Visitor extends Visitor
 
         return null;
     }
-}
 
+    @Override
+    public Object visit(NewObject n){
+        ClassDecl cls = n.objType.link;
+
+        // tell the runtime how many words to allocate:
+        // $s6 = number of primitive (int/bool) fields
+        // $s7 = number of object-reference fields
+        code.emit(n, "  li   $s6, " + cls.numDataFields);
+        code.emit(n, "  li   $s7, " + cls.numObjFields);
+
+        // newObject allocates memory, puts the pointer in $s7 and pushes it onto the stack
+        code.emit(n, "  jal  newObject");
+
+        // store the vtable pointer into the object's -12 header slot
+        code.emit(n, "  la   $t0, CLASS_" + cls.name);
+        code.emit(n, "  sw   $t0, -12($s7)");
+
+        // newObject already pushed the object pointer onto the stack
+        stack += 4;
+
+        return null;
+    }
+
+    // assign
+
+    // DeclList
+    // StmtList
+
+}
