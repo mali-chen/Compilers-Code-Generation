@@ -1,11 +1,13 @@
 package visitor;
-
 import syntaxtree.*;
 
 import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import errorMsg.*;
 import java.io.*;
+
 
 //the purpose here is to annotate things with their offsets:
 // - formal parameters, with respect to the (callee) frame
@@ -48,8 +50,8 @@ public class CG1Visitor extends Visitor
     {
         // comment the following line out if 
         // you are doing your own vtable generation:
-        VtableGenerator.generate(p, code);
-
+        // VtableGenerator.generate(p, code);
+        
         setOffsets(object);
 
         printOffsets(p);
@@ -94,9 +96,121 @@ public class CG1Visitor extends Visitor
      */
     private void setOffsets(ClassDecl c)
     {
+        int numObj = 0;
+        int numData = 0;
 
+        if(c.superLink != null){
+            numObj = c.superLink.numObjFields;
+            numData = c.superLink.numDataFields;
+        }
+
+        // assign field offsets 
+        for(Decl d: c.decls){
+            if(d instanceof FieldDecl){
+                FieldDecl f = (FieldDecl) d;
+                if(f.type.isInt() || f.type.isBoolean()){
+                    // primitives: negative offsets from the data pointer
+                    // starts at -16
+                    f.offset = -(16 + numData * 4);
+                    numData++;
+                }
+                else{
+                    // object reference (class, string, array, null)
+                    // indexed by 4 bytes, positve offsets
+                    f.offset = numObj * 4;
+                    numObj++;
+                }
+            }
+        }
+
+        // store final counts
+        c.numObjFields = numObj;
+        c.numDataFields = numData;
+
+        // count vtable entires
+        int nextSlot = nextVtableSlot(c.superLink);
+
+        for (Decl d : c.decls){
+            if (d instanceof MethodDecl){
+                MethodDecl m = (MethodDecl) d;
+                if (m.superMethod != null){
+                    // overriding: inherit parent's slot number
+                    m.vtableOffset = m.superMethod.vtableOffset;
+                }
+                else{
+                    // brand new method: assign next slot
+                    m.vtableOffset = nextSlot;
+                    nextSlot++;
+                }
+            }
+        }
+
+        // assign parameter offsets for each method in c
+        for (Decl d : c.decls){
+            if (d instanceof MethodDecl){
+                MethodDecl m = (MethodDecl) d;
+                assignParamOffsets(m);
+            }
+        }
+
+        for (ClassDecl sub : c.subclasses){
+            setOffsets(sub);
+        }
     }
-   
+
+    // returns how many vtable slots are already occupied in the given class  
+    private int nextVtableSlot(ClassDecl c){
+        if (c == null) return 0;
+ 
+        int count = nextVtableSlot(c.superLink);
+        for (Decl d : c.decls){
+            if (d instanceof MethodDecl){
+                MethodDecl m = (MethodDecl) d;
+                if (m.superMethod == null){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+ 
+    /**
+     * assigns stack frame offsets to the parameters of 1 method
+     *
+     * last  param = offset 4
+     * first param = offset 4 + sum(sizes of params after it)
+     */
+    private void assignParamOffsets(MethodDecl m){
+        // Walk params right-to-left, accumulating the offset.
+        int offset = 4; // first byte after the saved $ra
+ 
+        // collect params into a list to walk in reverse
+        List<VarDecl> params = new ArrayList<>();
+        for (VarDecl v : m.params){
+            params.add(v);
+        }
+ 
+        // assign offsets from last param to first
+        for (int i = params.size() - 1; i >= 0; i--){
+            VarDecl p = params.get(i);
+            p.offset = offset;
+            offset += paramSize(p.type);
+        }
+ 
+        // paramSize = total bytes for all params
+        m.paramSize = offset - 4; // - the initial 4 to get params
+    }
+ 
+    /**
+     * returns the number of bytes a parameter of the given type occupies on the call stack
+     *   int  = 8 (value word + integer-tag word)
+     *   bool = 4 (single word)
+     *   ref  = 4 (pointer word)
+     */
+    private int paramSize(Type t){
+        if (t.isInt()) return 8;
+        return 4; // boolean, object reference, array reference
+    }
 
 
     /////////////////////////////////////////////////////////////
