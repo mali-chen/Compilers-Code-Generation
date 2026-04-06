@@ -3,6 +3,7 @@ package visitor;
 import errorMsg.*;
 import java.io.*;
 import syntaxtree.*;
+import java.util.List;
 
 public class CG3Visitor extends Visitor
 {
@@ -61,6 +62,56 @@ public class CG3Visitor extends Visitor
 
         // flush the output and return
         code.flush();
+        return null;
+    }
+
+    // method declarations
+    // void method
+    @Override
+    public Object visit(MethodDeclVoid n){
+        // label: mth_<methodName>_<className>
+        code.emit(n, "mth_" + n.name + "_" + n.classDecl.name + ":");
+        
+        // push $ra to make nested calls and still return correctly
+        // set $fp = $sp so params are at positive offsets
+        // locals will be at negative offsets 
+        code.emit(n, " subu $sp, $sp, 4");
+        code.emit(n, " sw $ra, 0($sp)");
+        code.emit(n, " move $fp, $sp");
+
+        // reset stack at start of each method
+        stack = 0;
+
+        // generate code for method body
+        n.stmts.accept(this);
+
+        // restore $sp to $fp
+        // restore $ra, pop its slot, then return
+        code.emit(n, "  move $sp, $fp");
+        code.emit(n, "  lw   $ra, 0($sp)");
+        code.emit(n, "  addu $sp, $sp, 4");
+        code.emit(n, "  jr   $ra");
+ 
+        return null;
+    }
+
+    // statements
+    @Override
+    public Object visit(LocalDeclStmt n){
+        n.localVarDecl.accept(this);
+        return null;
+    }
+
+    @Override
+    public Object visit(LocalVarDecl n){
+        n.initExp.accept(this);
+        n.offset = -stack; // negative from $fp
+        return null;
+    }
+
+    @Override
+    public Object visit(CallStmt n){
+        n.callExp.accept(this);
         return null;
     }
 }
