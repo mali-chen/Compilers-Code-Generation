@@ -29,14 +29,14 @@
 # to run the program you can use
 # $ python3 grade.py tests5a
 
-import shutil
 from sys import argv          # get the test directory
 from pathlib import Path      # OS independent (hopefully) file handling
 from contextlib import chdir  # change directories using a with block
 from os import pathsep        # for compatability with windows since it uses ; for path seperators
 from shutil import rmtree     # remove directory at the end
 import subprocess             # just import subprocess, because the function is called run
-                              # and I want my own version. 
+                              # and I want my own version.
+import shutil
 
 # IF YOU ARE USING WINDOWS POWERSHELL YOU NEED TO CHANGE THIS TO TRUE!
 # This is because windows powershell doesn't allow you to redirect stdin
@@ -72,8 +72,10 @@ def main():
 
     # scrap directory for running the java tests
     scrap.mkdir(exist_ok=True)
-    shutil.copy(src / runMain, scrap)
-    shutil.copy(src / lib, scrap)
+    shutil.copy(src / runMain, scrap / runMain)
+    shutil.copy(src / lib, scrap / lib)
+    #(src / lib).copy_into(scrap)
+    #(src / lib).copy_into(scrap)
 
     # get each batch of tests and run them
     for batchDir in sorted(Path(argv[1]).iterdir()):
@@ -160,7 +162,8 @@ def mips(test, dat):
 # Runs java on the program and returns the output.
 def javaRun(test,dat):
     out = ""
-    test.copy_into(scrap)
+    shutil.copy(test, scrap / Path(test.name))
+    #test.copy_into(scrap)
 
     with chdir(scrap):
         # actually compile the java code.

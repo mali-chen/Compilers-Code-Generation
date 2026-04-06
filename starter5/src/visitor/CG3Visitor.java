@@ -135,7 +135,7 @@ public class CG3Visitor extends Visitor
     @Override
     public Object visit(IntLit n){
         code.emit(n," li $t0, " + n.val);
-        push(n, "t$0");
+        push(n, "$t0");
         return null;
     }
 
@@ -143,7 +143,7 @@ public class CG3Visitor extends Visitor
     @Override
     public Object visit(True n){
         code.emit(n, " li $t0, 1");
-        push(n, "t$0");
+        push(n, "$t0");
         return null;
     }
 
@@ -151,7 +151,7 @@ public class CG3Visitor extends Visitor
     @Override
     public Object visit(False n){
         code.emit(n, " li $t0, 0");
-        push(n, "t$0");
+        push(n, "$t0");
         return null;
     }
 
@@ -166,7 +166,7 @@ public class CG3Visitor extends Visitor
             primaryString = n;
         }
         code.emit(n, " la $t0, strLit_" + primaryString.pos);
-        push(n, "t$0");
+        push(n, "$t0");
         return null;
     }
 
@@ -193,5 +193,85 @@ public class CG3Visitor extends Visitor
         return null;
     }
 
+    // arithmetic 
+    // plus
+    @Override
+    public Object visit(Plus n){
+        n.left.accept(this); //push left operand
+        n.right.accept(this); //push right operand
+        pop(n, "$t1");     //right -> $t1
+        pop(n, "$t0");     //left  -> $t0
+        code.emit(n, " addu $t0, $t0, $t1"); // add them  
+        push(n, "$t0");
+        return null;
+    }
+
+    // minus
+    @Override
+    public Object visit(Minus n){
+        n.left.accept(this); //push left operand
+        n.right.accept(this); //push right operand
+        pop(n, "$t1");     //right -> $t1
+        pop(n, "$t0");     //left  -> $t0
+        code.emit(n, " subu $t0, $t0, $t1"); // subtract them  
+        push(n, "$t0");
+        return null;
+    }
+
+    // multiply
+    @Override
+    public Object visit(Times n){
+        n.left.accept(this); //push left operand
+        n.right.accept(this); //push right operand
+        pop(n, "$t1");     //right -> $t1
+        pop(n, "$t0");     //left  -> $t0
+        code.emit(n, " mul $t0, $t0, $t1"); // mulitply them  
+        push(n, "$t0");
+        return null;
+    }
+
+    // method calls
+    @Override
+    public Object visit(Call n){
+        MethodDecl method = n.methodLink;
+        push(n, "$s2");
+        n.args.accept(this);
+        n.obj.accept(this); // pushes receiver
+        pop(n, "$s2"); // $s2 = receiver
+
+        // call the method
+        if (n.obj instanceof Super){
+            MethodDecl targetMethod;
+            if(method.superMethod != null){
+                // using a method inherited from a parent class
+                targetMethod = method.superMethod;
+            } else{ // this class defined the method itself
+                targetMethod = method;
+            }
+
+            // label for the MIPS jump
+            String label = "mth_" + targetMethod.name + "_" + targetMethod.classDecl.name;
+            
+            // jal (jump and link) MIPS way to call a function
+            code.emit(n, "  jal  " + label);
+        } else{ 
+            code.emit(n, " lw $t0, -12($s2)");
+            code.emit(n, "  lw   $t0, " + (method.vtableOffset * 4) + "($t0)");
+            code.emit(n, "  jalr $t0");
+        }
+
+        // after return, $sp points at the last argument
+        // pop all arguments then restore $s2from old-this slot
+        int argBytes = method.paramSize;
+        if(argBytes > 0){
+            code.emit(n, "  addu $sp, $sp, " + argBytes);
+            stack -= argBytes;
+        }
+        // now old $s2 is at 0($sp)
+        // restore and pop its slot.
+        pop(n, "$s2");
+
+        return null;
+    }
 }
 
