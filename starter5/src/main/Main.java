@@ -1,5 +1,4 @@
-./run JavaFile.javapackage main;
-
+package main;
 import java.io.*;
 import java.nio.file.*;
 

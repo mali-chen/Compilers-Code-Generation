@@ -1,4 +1,3 @@
-
 public final class RunMain {
 	
 	// prevents anyone from creating an object of this class

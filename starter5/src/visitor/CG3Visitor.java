@@ -1,9 +1,8 @@
 package visitor;
 
-import syntaxtree.*;
 import errorMsg.*;
 import java.io.*;
-import java.util.List;
+import syntaxtree.*;
 
 public class CG3Visitor extends Visitor
 {
@@ -27,7 +26,7 @@ public class CG3Visitor extends Visitor
     {
         code.emit("  li $s6, 1");
         code.emit("  li $s7, 0");
-        code.emit("  newObject");
+        code.emit(" jal newObject");
         code.emit("  la $t0, CLASS_Main"); // put Main object on the stack
         code.emit("  sw $t0, -12($s7)");
         code.emit("  addu $sp,$sp,4");
