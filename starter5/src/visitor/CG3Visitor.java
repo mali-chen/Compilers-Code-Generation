@@ -70,7 +70,7 @@ public class CG3Visitor extends Visitor
     @Override
     public Object visit(MethodDeclVoid n){
         // label: mth_<methodName>_<className>
-        code.emit(n, "mth_" + n.name + "_" + n.classDecl.name + ":");
+        code.emit("mth_" + n.name + "_" + n.classDecl.name + ":");
         
         // push $ra to make nested calls and still return correctly
         // set $fp = $sp so params are at positive offsets
@@ -118,7 +118,7 @@ public class CG3Visitor extends Visitor
     // stack helpers
     private void push(String reg){
         // push a register value onto the stack and update stack counter
-        code.emit(" subu $sp, $sp , 4");
+        code.emit(" subu $sp, $sp, 4");
         code.emit(" sw " + reg + ", 0($sp)");
         stack += 4;
     }
@@ -126,7 +126,7 @@ public class CG3Visitor extends Visitor
     private void pop(String reg){
         // pop a register value onto the stack and update stack counter
         code.emit(" lw " + reg + ", 0($sp)");
-        code.emit(" addu $sp, $sp , 4");
+        code.emit(" addu $sp, $sp, 4");
         stack -= 4;
     }
 

@@ -50,7 +50,7 @@ public class CG1Visitor extends Visitor
     {
         // comment the following line out if 
         // you are doing your own vtable generation:
-        // VtableGenerator.generate(p, code);
+        VtableGenerator.generate(p, code);
         
         setOffsets(object);
 

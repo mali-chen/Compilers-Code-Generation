@@ -1,3 +1,81 @@
+ .data # Program at 1.0
+# ****** class Object ****** # ClassDecl at 0.0
+  .byte 0 # ClassDecl at 0.0
+  .byte 0 # ClassDecl at 0.0
+  .byte 207 # 'O' with high bit set # ClassDecl at 0.0
+  .byte 98 # 'b' # ClassDecl at 0.0
+  .byte 106 # 'j' # ClassDecl at 0.0
+  .byte 101 # 'e' # ClassDecl at 0.0
+  .byte 99 # 'c' # ClassDecl at 0.0
+  .byte 116 # 't' # ClassDecl at 0.0
+CLASS_Object: # ClassDecl at 0.0
+  .word mth_hashCode_Object # MethodDeclNonVoid at 0.0
+  .word mth_equals_Object # MethodDeclNonVoid at 0.0
+  .word mth_toString_Object # MethodDeclNonVoid at 0.0
+# ****** class String ****** # ClassDecl at 0.0
+  .byte 0 # ClassDecl at 0.0
+  .byte 0 # ClassDecl at 0.0
+  .byte 211 # 'S' with high bit set # ClassDecl at 0.0
+  .byte 116 # 't' # ClassDecl at 0.0
+  .byte 114 # 'r' # ClassDecl at 0.0
+  .byte 105 # 'i' # ClassDecl at 0.0
+  .byte 110 # 'n' # ClassDecl at 0.0
+  .byte 103 # 'g' # ClassDecl at 0.0
+CLASS_String: # ClassDecl at 0.0
+  .word mth_hashCode_String # MethodDeclNonVoid at 0.0
+  .word mth_equals_String # MethodDeclNonVoid at 0.0
+  .word mth_toString_String # MethodDeclNonVoid at 0.0
+  .word mth_concat_String # MethodDeclNonVoid at 0.0
+  .word mth_substring_String # MethodDeclNonVoid at 0.0
+  .word mth_length_String # MethodDeclNonVoid at 0.0
+  .word mth_charAt_String # MethodDeclNonVoid at 0.0
+  .word mth_compareTo_String # MethodDeclNonVoid at 0.0
+END_CLASS_String: # ClassDecl at 0.0
+# ****** class Lib ****** # ClassDecl at 0.0
+  .byte 0 # ClassDecl at 0.0
+  .byte 204 # 'L' with high bit set # ClassDecl at 0.0
+  .byte 105 # 'i' # ClassDecl at 0.0
+  .byte 98 # 'b' # ClassDecl at 0.0
+CLASS_Lib: # ClassDecl at 0.0
+  .word mth_hashCode_Object # MethodDeclNonVoid at 0.0
+  .word mth_equals_Object # MethodDeclNonVoid at 0.0
+  .word mth_toString_Object # MethodDeclNonVoid at 0.0
+  .word mth_readLine_Lib # MethodDeclNonVoid at 0.0
+  .word mth_readInt_Lib # MethodDeclNonVoid at 0.0
+  .word mth_readChar_Lib # MethodDeclNonVoid at 0.0
+  .word mth_printStr_Lib # MethodDeclVoid at 0.0
+  .word mth_printBool_Lib # MethodDeclVoid at 0.0
+  .word mth_printInt_Lib # MethodDeclVoid at 0.0
+  .word mth_intToString_Lib # MethodDeclNonVoid at 0.0
+  .word mth_intToChar_Lib # MethodDeclNonVoid at 0.0
+END_CLASS_Lib: # ClassDecl at 0.0
+# ****** class RunMain ****** # ClassDecl at 0.0
+  .byte 0 # ClassDecl at 0.0
+  .byte 210 # 'R' with high bit set # ClassDecl at 0.0
+  .byte 117 # 'u' # ClassDecl at 0.0
+  .byte 110 # 'n' # ClassDecl at 0.0
+  .byte 77 # 'M' # ClassDecl at 0.0
+  .byte 97 # 'a' # ClassDecl at 0.0
+  .byte 105 # 'i' # ClassDecl at 0.0
+  .byte 110 # 'n' # ClassDecl at 0.0
+CLASS_RunMain: # ClassDecl at 0.0
+  .word mth_hashCode_Object # MethodDeclNonVoid at 0.0
+  .word mth_equals_Object # MethodDeclNonVoid at 0.0
+  .word mth_toString_Object # MethodDeclNonVoid at 0.0
+END_CLASS_RunMain: # ClassDecl at 0.0
+# ****** class Main ****** # ClassDecl at 1.6
+  .byte 205 # 'M' with high bit set # ClassDecl at 1.6
+  .byte 97 # 'a' # ClassDecl at 1.6
+  .byte 105 # 'i' # ClassDecl at 1.6
+  .byte 110 # 'n' # ClassDecl at 1.6
+CLASS_Main: # ClassDecl at 1.6
+  .word mth_hashCode_Object # MethodDeclNonVoid at 0.0
+  .word mth_equals_Object # MethodDeclNonVoid at 0.0
+  .word mth_toString_Object # MethodDeclNonVoid at 0.0
+  .word mth_main_Main # MethodDeclVoid at 2.15
+END_CLASS_Main: # ClassDecl at 1.6
+dataArrayVTableStart: # IntType at 0.0
+END_CLASS_Object: # ClassDecl at 0.0
 .text
 .globl main
 main:
@@ -13,8 +91,6 @@ main:
   li $v0, 10
   syscall
 mth_main_Main:
-  jr $ra
-mth_main_Main: # MethodDeclVoid at 2.15; stackHeight = 0
  subu $sp, $sp, 4 # MethodDeclVoid at 2.15; stackHeight = 0
  sw $ra, 0($sp) # MethodDeclVoid at 2.15; stackHeight = 0
  move $fp, $sp # MethodDeclVoid at 2.15; stackHeight = 0
